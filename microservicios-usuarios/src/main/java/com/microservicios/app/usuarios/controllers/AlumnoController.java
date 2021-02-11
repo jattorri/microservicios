@@ -1,8 +1,10 @@
 package com.microservicios.app.usuarios.controllers;
 
-import com.microservicios.app.usuarios.models.entity.Alumno;
 import com.microservicios.app.usuarios.services.AlumnoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.microservicios.commons.alumnos.models.entity.Alumno;
+import com.microservicios.commons.controllers.CommonController;
+
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,38 +12,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-public class AlumnoController {
+public class AlumnoController extends CommonController<Alumno, AlumnoService> {
 	
-    @Autowired
-    private AlumnoService service;
-
-    @GetMapping
-    public ResponseEntity<?> listar(){
-        return ResponseEntity.ok().body(service.findAll());
-    }
+   
     
-    @GetMapping("/{id}")
-    public ResponseEntity<?> ver(@PathVariable Long id){
-        Optional<Alumno> o = service.findById(id);
-        if(o.isPresent()){   return ResponseEntity.ok(o.get());}
-        else {
-           return ResponseEntity.notFound().build();
-        }
-     
-    }
-    
-    @PostMapping
-    public ResponseEntity<?> crear (@RequestBody Alumno alumno){
-        Alumno alumnoDb = service.save(alumno);
-        return ResponseEntity.status(HttpStatus.CREATED).body(alumnoDb);
-    }
     @PutMapping("/{id}")
     public ResponseEntity<?> editar(@RequestBody Alumno alumno, @PathVariable Long id){
         Optional<Alumno> o = service.findById(id);
 
-        if(o.isPresent()){}
-        else {
-            return ResponseEntity.notFound().build();
+        if(!o.isPresent()){ 
+        	return ResponseEntity.notFound().build();
         }
 
         Alumno alumnoDb = o.get();
@@ -50,9 +30,10 @@ public class AlumnoController {
         alumnoDb.setEmail(alumno.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(alumnoDb));
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar (@PathVariable Long id){
-        service.deleteById(id);
-        return ResponseEntity.noContent().build();
+    
+    @GetMapping("/filtrar/{term}")
+    public ResponseEntity<?> filtrar (@PathVariable String term){
+    	return ResponseEntity.ok(service.findByNombreOrApellido(term));
     }
+    
 }
