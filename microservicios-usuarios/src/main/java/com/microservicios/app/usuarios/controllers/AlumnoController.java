@@ -18,7 +18,7 @@ public class AlumnoController extends CommonController<Alumno, AlumnoService> {
     
     @PutMapping("/{id}")
     public ResponseEntity<?> editar(@RequestBody Alumno alumno, @PathVariable Long id){
-        Optional<Alumno> o = service.findById(id);
+       Optional<Alumno> o = service.findById(id);
 
         if(!o.isPresent()){ 
         	return ResponseEntity.notFound().build();

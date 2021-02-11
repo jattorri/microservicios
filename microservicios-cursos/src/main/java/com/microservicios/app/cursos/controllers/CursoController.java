@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,13 +37,13 @@ if(!o.isPresent()) {
     	if(!o.isPresent()) {
     		return ResponseEntity.notFound().build();
     	} 
-    	else {
     		Curso dbCurso = o.get();
+    		
     		alumnos.forEach(a -> {
     			dbCurso.addAlumno(a);
     		});
     		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(dbCurso));
-    	}		
+    			
     }
     
     @PutMapping("/{id}/eliminar-alumno")
@@ -56,5 +57,10 @@ if(!o.isPresent()) {
     		dbCurso.removeAlumno(alumno);
     		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(dbCurso));
     	
+    }
+    @GetMapping("/alumno/{id}")
+    public ResponseEntity<?>buscarPorAlumnoId(@PathVariable Long id){
+    	Curso curso = service.findCursoByAlumnoId(id);
+    	return ResponseEntity.ok(curso);
     }
     }   
