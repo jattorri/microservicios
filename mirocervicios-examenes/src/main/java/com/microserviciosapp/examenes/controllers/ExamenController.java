@@ -2,6 +2,7 @@ package com.microserviciosapp.examenes.controllers;
 
 
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.microservicios.commons.controllers.CommonController;
@@ -21,6 +23,10 @@ import com.microserviciosapp.examenes.services.ExamenService;
 
 @RestController
 public class ExamenController extends CommonController<Examen, ExamenService>{
+	@GetMapping("/respondidos-por-preguntas")
+	public ResponseEntity<?> obtenerExamenesIdsPorPreguntasIdRespondidas(@RequestParam List<Long> preguntaIds){
+		return ResponseEntity.ok().body(service.findExamenesIdsRespondidoByPreguntaIds(preguntaIds));
+	}
     
 	@PutMapping("/{id}")
     public ResponseEntity<?> editar (@Valid @RequestBody Examen examen, BindingResult result, @PathVariable Long id){
