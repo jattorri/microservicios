@@ -1,6 +1,6 @@
 package com.microservicios.app.respuestas.services;
 
-import java.util.Collections;
+//import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,19 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import com.microservicios.app.respuestas.clients.ExamenFeignClient;
+//import com.microservicios.app.respuestas.clients.ExamenFeignClient;
 import com.microservicios.app.respuestas.models.entity.Respuesta;
 import com.microservicios.app.respuestas.models.repository.RespuestaRepository;
-import com.microservicios.commons.examenes.models.entity.Examen;
-import com.microservicios.commons.examenes.models.entity.Pregunta;
+//import com.microservicios.commons.examenes.models.entity.Examen;
+//import com.microservicios.commons.examenes.models.entity.Pregunta;
 @Service
 public class RespuestaServiceImpl implements RespuestaService {
     
 	@Autowired
 	private RespuestaRepository repository;
 	
-	@Autowired
-	private ExamenFeignClient examenClient;
+	//@Autowired
+	//private ExamenFeignClient examenClient;
 	
 	@Override
 	
@@ -31,7 +31,7 @@ public class RespuestaServiceImpl implements RespuestaService {
 	
 	@Override
 	public Iterable<Respuesta> findRespuestaByAlumnoByExamen(Long alumnoId, Long examenId) {
-		Examen examen = examenClient.obtenerExamenPorId(examenId);
+		/*Examen examen = examenClient.obtenerExamenPorId(examenId);
 		List<Pregunta> preguntas = examen.getPreguntas();
 		List<Long> preguntaIds = preguntas.stream().map(p -> p.getId()).collect(Collectors.toList());
 		List<Respuesta> respuestas = (List<Respuesta>)repository.findRespuestaByAlumnoByPreguntaIds(alumnoId, preguntaIds);
@@ -42,20 +42,26 @@ public class RespuestaServiceImpl implements RespuestaService {
 				}
 			});
 			return r;
-		}).collect(Collectors.toList());
+		}).collect(Collectors.toList());*/
+		List<Respuesta> respuestas = (List<Respuesta>)repository.findRespuestaByAlumnoByExamen(alumnoId, examenId);
 		return respuestas;
 	}
 	
 	@Override
-	
 	public Iterable<Long> findExamenesIdsRespondidoByAlumno(Long alumnoId) {
-		List<Respuesta> respuestasAlumno = (List<Respuesta>) repository.findByAlumnoId(alumnoId);
+		/*List<Respuesta> respuestasAlumno = (List<Respuesta>) repository.findByAlumnoId(alumnoId);
 		List<Long> examenIds = Collections.emptyList();
 		if(respuestasAlumno.size() > 0) {
 			List<Long> preguntaIds = respuestasAlumno.stream().map( r -> r.getPreguntaId()).collect(Collectors.toList());
 			examenIds =  examenClient.obtenerExamenesIdsPorPreguntasIdRespondidas(preguntaIds);
-		}
-		return null;
+		}*/
+		List<Respuesta> respuestasAlumno = (List<Respuesta>) repository.findExamenesIdsRespondidoByAlumno(alumnoId);
+		List<Long> examenIds = respuestasAlumno
+				.stream()
+				.map(r -> r.getPregunta().getExamen().getId())
+				.distinct()
+				.collect(Collectors.toList());
+		return examenIds;
 	}
 
 	@Override
