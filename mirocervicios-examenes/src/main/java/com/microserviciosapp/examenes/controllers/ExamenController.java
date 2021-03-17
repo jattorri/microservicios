@@ -4,6 +4,7 @@ package com.microserviciosapp.examenes.controllers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -19,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.microservicios.commons.controllers.CommonController;
 import com.microservicios.commons.examenes.models.entity.Examen;
+import com.microservicios.commons.examenes.models.entity.Pregunta;
 import com.microserviciosapp.examenes.services.ExamenService;
 
 @RestController
 public class ExamenController extends CommonController<Examen, ExamenService>{
+	
 	@GetMapping("/respondidos-por-preguntas")
 	public ResponseEntity<?> obtenerExamenesIdsPorPreguntasIdRespondidas(@RequestParam List<Long> preguntaIds){
 		return ResponseEntity.ok().body(service.findExamenesIdsRespondidoByPreguntaIds(preguntaIds));
@@ -41,12 +44,16 @@ public class ExamenController extends CommonController<Examen, ExamenService>{
     Examen examenDb = o.get();
     examenDb.setNombre(examen.getNombre());
     
-    examenDb.getPreguntas()
+    List <Pregunta> eliminadas = examenDb.getPreguntas()
     .stream()
     .filter(pdb -> !examen.getPreguntas().contains(pdb))
-    .forEach(examenDb::removePregunta);
+    .collect(Collectors.toList());
+    
+    eliminadas.forEach(examenDb::removePregunta);
     
     examenDb.setPreguntas(examen.getPreguntas());
+    examenDb.setAsignaturaHija(examen.getAsignaturaHija());
+    examenDb.setAsignaturaPadre(examen.getAsignaturaPadre());
     return ResponseEntity.status(HttpStatus.CREATED).body(service.save(examenDb));
     
 	}

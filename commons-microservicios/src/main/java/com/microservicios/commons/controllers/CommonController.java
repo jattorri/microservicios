@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
-
+//@CrossOrigin({"http://localhost:4200"})
 public class CommonController<E, S extends CommonService<E>> {
 	
     @Autowired

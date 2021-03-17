@@ -73,7 +73,7 @@ public class AlumnoController extends CommonController<Alumno, AlumnoService> {
 		return super.crear(alumno, result);
 	}
 
-	@PutMapping("/editar-con-foto{id}")
+	@PutMapping("/editar-con-foto/{id}")
 	public ResponseEntity<?> editarConFoto(@Valid Alumno alumno, BindingResult result, @PathVariable Long id,
 			@RequestParam MultipartFile archivo) throws IOException {
 
